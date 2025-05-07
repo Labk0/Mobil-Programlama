@@ -36,6 +36,7 @@ public class Camera extends AppCompatActivity {
 
         Button btnResim = findViewById(R.id.btnCamRes);
         Button btnVideo = findViewById(R.id.btnCamVid);
+        Button btnGeri = findViewById(R.id.btnBack);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -67,6 +68,8 @@ public class Camera extends AppCompatActivity {
                 Toast.makeText(this, "Kamera izni gerekli", Toast.LENGTH_SHORT).show();
             }
         });
+
+        btnGeri.setOnClickListener(v -> finish());
     }
 
     @Override

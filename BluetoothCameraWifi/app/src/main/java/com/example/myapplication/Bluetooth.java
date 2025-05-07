@@ -23,7 +23,7 @@ import java.util.Set;
 public class Bluetooth extends AppCompatActivity {
     private static final int REQUEST_BLUETOOTH_PERMISSION = 1;
 
-    Button bAc, bKapa, bList, bOpe;
+    Button bAc, bKapa, bList, bOpe, btnBack;
     private BluetoothAdapter BA;
     private Set<BluetoothDevice> pairedDevices;
     ListView lv;
@@ -37,6 +37,7 @@ public class Bluetooth extends AppCompatActivity {
         bKapa = (Button) findViewById(R.id.btnBlueKapa);
         bList = (Button) findViewById(R.id.bntBlueList);
         bOpe = (Button) findViewById(R.id.btnBlueOpe);
+        btnBack = (Button) findViewById(R.id.btnBack);
 
         BA = BluetoothAdapter.getDefaultAdapter();
         lv = (ListView) findViewById(R.id.liste);
@@ -47,6 +48,8 @@ public class Bluetooth extends AppCompatActivity {
         } else {
             checkAndRequestPermission();
         }
+
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void checkAndRequestPermission(){
