@@ -10,22 +10,22 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ThermometerActivity extends AppCompatActivity {
+public class TemperatureActivity extends AppCompatActivity {
 
     private SensorManager sensorManager;
-    private Sensor thermometer;
+    private Sensor temperature;
     private SensorEventListener listener;
     private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.thermometer);
+        setContentView(R.layout.temperature);
 
-        textView = findViewById(R.id.textView_the);
+        textView = findViewById(R.id.textView_tem);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        //thermometer = sensorManager.getDefaultSensor(Sensor.TYPE_THERMOMETER); DONT KNOW HOW
+        temperature = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
 
         listener = new SensorEventListener() {
             @Override
@@ -41,7 +41,7 @@ public class ThermometerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(listener, thermometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(listener, temperature, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override

@@ -10,22 +10,22 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MagnometerActivity extends AppCompatActivity {
+public class MagnetometerActivity extends AppCompatActivity {
 
     private SensorManager sensorManager;
-    private Sensor magnometer;
+    private Sensor magnetometer;
     private SensorEventListener listener;
     private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.magnometer);
+        setContentView(R.layout.magnetometer);
 
         textView = findViewById(R.id.textView_mag);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        //magnometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNOMETER); DONT KNOW HOW
+        //magnetometer = sensorManager.getDefaultSensor(Sensor.TYPEMAGNETOMETER); DONT KNOW HOW
 
         listener = new SensorEventListener() {
             @Override
@@ -41,7 +41,7 @@ public class MagnometerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(listener, magnometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(listener, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override

@@ -7,9 +7,9 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/textView_the"
+        android:id="@+id/textView_tem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Thermometer Data"
+        android:text="Temperature Data"
         android:textSize="24sp" />
 </LinearLayout>
