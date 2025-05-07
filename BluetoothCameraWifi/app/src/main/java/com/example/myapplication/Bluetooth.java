@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -33,16 +34,16 @@ public class Bluetooth extends AppCompatActivity {
         super.onCreate(SavedInstanceState);
         setContentView(R.layout.activity_bluetooth);
 
-        bAc = (Button) findViewById(R.id.btnBlueAc);
-        bKapa = (Button) findViewById(R.id.btnBlueKapa);
-        bList = (Button) findViewById(R.id.bntBlueList);
-        bOpe = (Button) findViewById(R.id.btnBlueOpe);
-        btnBack = (Button) findViewById(R.id.btnBack);
+        bAc = findViewById(R.id.btnBlueAc);
+        bKapa = findViewById(R.id.btnBlueKapa);
+        bList = findViewById(R.id.bntBlueList);
+        bOpe = findViewById(R.id.btnBlueOpe);
+        btnBack = findViewById(R.id.btnBack);
 
         BA = BluetoothAdapter.getDefaultAdapter();
-        lv = (ListView) findViewById(R.id.liste);
+        lv = findViewById(R.id.liste);
 
-        if(BA == null){
+        if (BA == null){
             Toast.makeText(getApplicationContext(),"Bluetooth cihazda desteklenmiyor.", Toast.LENGTH_LONG).show();
             finish();
         } else {
@@ -53,44 +54,36 @@ public class Bluetooth extends AppCompatActivity {
     }
 
     private void checkAndRequestPermission(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED &&
-        ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED &&
-        ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                    Manifest.permission.BLUETOOTH_CONNECT
-            }, REQUEST_BLUETOOTH_PERMISSION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Android 12 ve sonrası için
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.BLUETOOTH_CONNECT,
+                        Manifest.permission.BLUETOOTH_SCAN
+                }, REQUEST_BLUETOOTH_PERMISSION);
+            } else {
+                initializeBluetooth();
+            }
         } else {
-            initializeBluetooth();
+            // Android 11 ve öncesi için
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.BLUETOOTH,
+                        Manifest.permission.BLUETOOTH_ADMIN
+                }, REQUEST_BLUETOOTH_PERMISSION);
+            } else {
+                initializeBluetooth();
+            }
         }
     }
 
     private void initializeBluetooth(){
-        bAc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                on(v);
-            }
-        });
-        bKapa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                off(v);
-            }
-        });
-        bList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                list(v);
-            }
-        });
-        bOpe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeVisible(v);
-            }
-        });
+        bAc.setOnClickListener(v -> on(v));
+        bKapa.setOnClickListener(v -> off(v));
+        bList.setOnClickListener(v -> list(v));
+        bOpe.setOnClickListener(v -> makeVisible(v));
     }
 
     public void on(View v){
@@ -99,40 +92,52 @@ public class Bluetooth extends AppCompatActivity {
                 Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(turnOn, 0);
                 Toast.makeText(this, "Bluetooth açıldı", Toast.LENGTH_SHORT).show();
-                } else {
+            } else {
                 Toast.makeText(this, "Bluetooth zaten açık", Toast.LENGTH_SHORT).show();
-                }
+            }
         } else {
-                Toast.makeText(this, "Bluetooth açma izni verilmedi", Toast.LENGTH_SHORT).show();
-                checkAndRequestPermission();
+            Toast.makeText(this, "Bluetooth açma izni verilmedi", Toast.LENGTH_SHORT).show();
+            checkAndRequestPermission();
         }
     }
 
     public void off(View v){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED){
             if (BA.isEnabled()){
-                BA.disable();
-                Toast.makeText(this, "Bluetooth kapatıldı", Toast.LENGTH_SHORT).show();
+                //Android 13 ten sonra bluetooth kapatılamıyor
+                Intent intent = new Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+                startActivity(intent);
+                Toast.makeText(this, "Lütfen Bluetooth'u manuel olarak kapatın", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Bluetooth zaten açık", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Bluetooth zaten kapalı", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(this, "Bluetooth kapatma izni verilmedi", Toast.LENGTH_SHORT).show();
             checkAndRequestPermission();
         }
     }
+
+
     public void list(View v){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED){
+
+            if (!BA.isEnabled()) {
+                lv.setAdapter(null);
+                Toast.makeText(this, "Bluetooth kapalı.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             pairedDevices = BA.getBondedDevices();
             ArrayList<String> list  = new ArrayList<>();
             for (BluetoothDevice bt : pairedDevices){
                 list.add(bt.getName() + "\n" + bt.getAddress());
             }
 
-            if(list.size() > 0){
+            if (list.size() > 0){
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
                 lv.setAdapter(adapter);
             } else {
+                lv.setAdapter(null);
                 Toast.makeText(this, "Eşleştirilmiş cihaz yok", Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -140,25 +145,33 @@ public class Bluetooth extends AppCompatActivity {
             checkAndRequestPermission();
         }
     }
+
     public void makeVisible(View v){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED){
             Intent getVisible = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             startActivityForResult(getVisible, 0);
             Toast.makeText(this, "Cihaz görünür hale getirildi", Toast.LENGTH_SHORT).show();
-            }else {
+        } else {
             Toast.makeText(this, "Cihazı görünür yapmak için izin verilmedi", Toast.LENGTH_SHORT).show();
             checkAndRequestPermission();
-            }
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_BLUETOOTH_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+            if (allGranted) {
                 initializeBluetooth();
             } else {
-                Toast.makeText(this, "Bluetooth işlemi için izin verilmedi", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Bluetooth işlemi için gerekli izinler reddedildi", Toast.LENGTH_SHORT).show();
             }
         }
     }
