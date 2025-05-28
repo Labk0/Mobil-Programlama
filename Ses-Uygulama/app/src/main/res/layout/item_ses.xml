@@ -3,32 +3,36 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="8dp"
+    android:layout_margin="8dp"
     card_view:cardElevation="4dp"
-    android:layout_margin="8dp">
+    card_view:cardCornerRadius="12dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/textViewSesAdi"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Ses Adı"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <ImageButton
-            android:id="@+id/buttonOynat"
+            android:id="@+id/txtSesAdi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_media_play"
-            android:contentDescription="Ses oynat"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:text="Ses Adı"
+            android:textSize="18sp"
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtKategoriAdi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kategori"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp"
+            android:textStyle="italic" />
+
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>
