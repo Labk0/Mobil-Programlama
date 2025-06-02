@@ -1,24 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
-    <!-- Kategori Seçimi -->
-    <Spinner
-        android:id="@+id/spinnerKategori"
+    <!-- Toolbar (Geri dönüş butonu ve başlık için) -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:popupTheme="@style/SpinnerDropdownStyle"
-        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"/>
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarMain"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Başlık"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Kategori Seçimi -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/kategoriInputLayout"
+        style="@style/CustomSpinnerStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Kategori Seçin">
+
+        <AutoCompleteTextView
+            android:id="@+id/spinnerKategori"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:textSize="16sp"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Ses Listesi -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSesler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         android:layout_weight="1" />
 
     <!-- Alt Oynatıcı -->
@@ -26,49 +69,84 @@
         android:id="@+id/playerBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:background="#ECECEC"
-        android:padding="8dp">
+        android:visibility="gone">
 
-        <TextView
-            android:id="@+id/txtPlayerTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ses Başlığı"
-            android:textStyle="bold" />
-
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+        <!-- Üst Kısım: Başlık ve Süre -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/txtPlayerTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#666666"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Orta Kısım: SeekBar -->
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:progressTint="@color/design_default_color_primary"
+            android:thumbTint="@color/design_default_color_primary" />
+
+        <!-- Alt Kısım: Kontrol Butonları -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <ImageButton
                 android:id="@+id/btnPlayPause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Oynat/Duraklat"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
                 android:src="@android:drawable/ic_media_play"
-                android:background="?android:selectableItemBackgroundBorderless" />
+                android:tint="@color/design_default_color_primary" />
 
-            <CheckBox
-                android:id="@+id/chkLoop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Döngü" />
+            <ImageButton
+                android:id="@+id/btnLoop"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Döngü"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_repeat_off" />
 
-            <TextView
-                android:id="@+id/txtTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00"
-                android:layout_gravity="center_vertical"
-                android:paddingStart="16dp" />
         </LinearLayout>
+
+        <!-- Ayırıcı Çizgi -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE" />
+
     </LinearLayout>
 
     <!-- Ses Ekleme Butonu -->
